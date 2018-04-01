@@ -1,16 +1,14 @@
 package org.bitbucket.cpointe.prime;
 
-import org.aeonbits.owner.KrauseningConfigFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.bitbucket.krausening.Krausening;
-import org.flywaydb.core.Flyway;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import java.util.Properties;
+
+import org.aeonbits.owner.KrauseningConfigFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PrimeContextListener implements ServletContextListener {
 
@@ -19,7 +17,6 @@ public class PrimeContextListener implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(PrimeContextListener.class);
 
     protected PrimeConfig primeConfig;
-    protected Properties configurationProperties = Krausening.getInstance().getProperties("data-source.properties");
     protected Flyway flyway;
 
     public void contextDestroyed(ServletContextEvent event) {
