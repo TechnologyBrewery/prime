@@ -10,10 +10,10 @@
 
 	<name>prime</name>
 	<description>
-		In brewing, your prime your nearly finished beer with a little extra sugar (or similar fermentable product) 
-		just before bottling to help the beer have carbonation.  Prime helps add a little structure or data to your database 
-		just before starting up your application.  Prime leverages Flyway to deliver "sugar" to your database - we just 
-		do a little bit to package it up to run when your war is loaded.
+		In brewing, you prime nearly finished beer with a little extra sugar (or similar fermentable product) just 
+		before bottling to help the beer carbonate.  In  Java, Prime adds a little structure or manipulates data in
+		your database just before starting up your application.  Prime leverages Flyway to deliver "sugar" to your 
+		database - we just do a little bit to package it up to run when your war is loaded.
 	</description>
 	<url>https://bitbucket.org/cpointe/prime</url>
 

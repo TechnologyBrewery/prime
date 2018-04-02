@@ -10,6 +10,9 @@ import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Context listener that runs database migrations from Flyway during application startup.
+ */
 public class PrimeContextListener implements ServletContextListener {
 
     private static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
@@ -19,10 +22,16 @@ public class PrimeContextListener implements ServletContextListener {
     protected PrimeConfig primeConfig;
     protected Flyway flyway;
 
+    /**
+     * {@inheritDoc}
+     */
     public void contextDestroyed(ServletContextEvent event) {
         // nothing to do when the context is destroyed
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public void contextInitialized(ServletContextEvent event) {
         long start = System.currentTimeMillis();
 
