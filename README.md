@@ -16,6 +16,7 @@ Prime is easy to setup - it just takes a couple of simple steps:
         <listener-class>org.bitbucket.cpointe.prime.PrimeContextListener</listener-class>
     </listener>
 ```
+
 2.) Ensure that you have [Krausening](https://bitbucket.org/cpointe/krausening) configured, minually specifying the following values in the Krausening-managed `prime.properties`:
 
 ```
