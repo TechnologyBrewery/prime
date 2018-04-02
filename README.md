@@ -39,7 +39,7 @@ It's common to have multiple deployment units deployed to a single application s
 
 1.) Add an extra configuration parameter to each of your web.xml files that specifies which properties file will contain your configurations (rather than the standard `prime.properties`):
 
- ```
+```
 #!xml
 	<context-param>
 		<param-name>prime.properties.file.name</param-name>
