@@ -55,11 +55,13 @@ public class PrimeContextListener implements ServletContextListener {
         logger.info("Migrating application if necessary with Flyway in: {}", locations);
 
         // try 3 times (w/ 20 sec pauses) in case the database is taking a minute to startup
+        boolean flywayRan = false;
         int maxRetries = 3;
         for (int i = 0; i < maxRetries; i++) {
             try {
                 flyway.migrate();
-                return;
+                flywayRan = true;
+                break;
             } catch (Exception e) {
                 logger.error("Failed to migrate flyway...", e);
                 try {
@@ -70,9 +72,11 @@ public class PrimeContextListener implements ServletContextListener {
                 }
             }
         }
-
-        // run one last time outside try/catch so if the migration failed the startup fails
-        flyway.migrate();
+        
+        if (!flywayRan) {
+            // run one last time outside try/catch so if the migration failed the startup fails
+            flyway.migrate();
+        }
 
         long stop = System.currentTimeMillis();
         logger.info("COMPLETE: Prime migrations executed in {}ms", (stop - start));
