@@ -78,10 +78,10 @@ public interface PrimeConfig extends KrauseningConfig {
     String getPassword();
 
     /**
-     * A comma separated list of Flyway-style migration locations
+     * A comma separated list of Flyway-style migration locations.  For more information, please see the following url:
+     * https://flywaydb.org/documentation/commandline/migrate#locations
      * 
      * @return migration locations
-     * @see https://flywaydb.org/documentation/commandline/migrate#locations
      */
     @Key("migration.locations")
     @DefaultValue("classpath:migrations")
