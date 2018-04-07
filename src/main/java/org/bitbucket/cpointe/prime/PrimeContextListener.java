@@ -121,5 +121,10 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setLocations(primeConfig.getMigrationLocations());
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
+        flyway.setIgnoreMissingMigrations(true);
+        
+        if (StringUtils.isNotBlank(primeConfig.getTable())) {
+            flyway.setTable(primeConfig.getTable());
+        }
     }
 }
