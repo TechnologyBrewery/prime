@@ -104,5 +104,12 @@ public interface PrimeConfig extends KrauseningConfig {
     @Key("placeholder.suffix")
     @DefaultValue("}")
     String getPlaceholderSuffix();
+    
+    /**
+     * When set, will customize the table in which Flyway stores history information.
+     * @return name of the custom schema
+     */
+    @Key("schema.table")
+    String getTable();
 
 }
