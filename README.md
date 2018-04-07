@@ -27,7 +27,7 @@ password=myPassword
 schema=mySchema
 ```
 
-For an entire list of what is configurable what defaul values are used, please see [PrimeConfig](https://bitbucket.org/cpointe/prime/src/a9bc4fe5e7c73857e2621e13b5e7073d06c2a27e/src/main/java/org/bitbucket/cpointe/prime/PrimeConfig.java?at=master&fileviewer=file-view-default) for the version you are leveraging.
+For an entire list of what is configurable what default values are used, please see [PrimeConfig](https://bitbucket.org/cpointe/prime/src/a9bc4fe5e7c73857e2621e13b5e7073d06c2a27e/src/main/java/org/bitbucket/cpointe/prime/PrimeConfig.java?at=master&fileviewer=file-view-default) for the version you are leveraging.
 
 3.) Make sure you have at least one Flyway migration defined in `src/main/resources/db/migrations`.
 
@@ -48,6 +48,12 @@ It's common to have multiple deployment units deployed to a single application s
 ```
 
 2.) Ensure that you have [Krausening](https://bitbucket.org/cpointe/krausening) configured, minually specifying the following values in the Krausening-managed `prime.properties`:
+
+# Prime Advanced Configuration #
+
+You can leverage Flyway placeholders by adding any property to your `prime.properties` file that begins with `placeholder.`.  By default, you will get a placeholder property called `placeholder.schema` when you set a schema in your `prime.properties`.  
+
+For a full list of configuration options, please see the inteface and javadoc for [PrimeConfig](https://bitbucket.org/cpointe/prime/src/a9bc4fe5e7c73857e2621e13b5e7073d06c2a27e/src/main/java/org/bitbucket/cpointe/prime/PrimeConfig.java?at=master&fileviewer=file-view-default).
 
 # Distribution Channel
 

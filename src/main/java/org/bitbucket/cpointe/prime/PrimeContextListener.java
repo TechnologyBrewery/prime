@@ -1,11 +1,16 @@
 package org.bitbucket.cpointe.prime;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import org.aeonbits.owner.KrauseningConfigFactory;
 import org.apache.commons.lang3.StringUtils;
+import org.bitbucket.krausening.Krausening;
 import org.flywaydb.core.Flyway;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,13 +19,16 @@ import org.slf4j.LoggerFactory;
  * Context listener that runs database migrations from Flyway during application startup.
  */
 public class PrimeContextListener implements ServletContextListener {
-
-    private static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
-
+    
     private static final Logger logger = LoggerFactory.getLogger(PrimeContextListener.class);
+    
+    protected static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
+    protected static final String PLACEHOLDER_PREFIX = "placeholder.";
+    protected static final String PLACEHOLDER_SCHEMA = PLACEHOLDER_PREFIX + "schema";
 
     protected PrimeConfig primeConfig;
     protected Flyway flyway;
+    protected String propertiesFileName = "prime.properties";
 
     /**
      * {@inheritDoc}
@@ -44,6 +52,8 @@ public class PrimeContextListener implements ServletContextListener {
         }
 
         initFlyway();
+        
+        
 
         // if the application hasn't already been baselined then baseline
         flyway.setBaselineOnMigrate(primeConfig.shouldBaselineOnMigrate());
@@ -94,6 +104,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         if (StringUtils.isNotBlank(overloadedPropertiesName)) {
             primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, overloadedPropertiesName);
+            propertiesFileName = overloadedPropertiesName;
             logger.info("Overriding prime configuration to look at properties named {}", overloadedPropertiesName);
 
         } else {
@@ -105,11 +116,14 @@ public class PrimeContextListener implements ServletContextListener {
     protected void initFlyway() {
         flyway = new Flyway();
 
+        Map<String, String> placeholders = getPlaceholders();
+        
         // Set schema
         String schema = primeConfig.getSchema();
         if (StringUtils.isNotBlank(schema)) {
             flyway.setSchemas(schema);
-        }
+            placeholders.put(PLACEHOLDER_SCHEMA, schema);
+        }                
 
         // Point it to the database
         String url = primeConfig.getUrl();
@@ -121,9 +135,25 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setLocations(primeConfig.getMigrationLocations());
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
+        flyway.setPlaceholders(placeholders);
         
         if (StringUtils.isNotBlank(primeConfig.getTable())) {
             flyway.setTable(primeConfig.getTable());
         }
     }
+    
+    protected Map<String, String> getPlaceholders() {
+        Map<String, String> placeholders = new HashMap<>();
+        Properties primeProperties = Krausening.getInstance().getProperties(propertiesFileName);
+        
+        for (Object key : primeProperties.keySet()) {
+            String keyAsString = key.toString();
+            if (keyAsString.startsWith(PLACEHOLDER_PREFIX)) {
+                placeholders.put(keyAsString, primeProperties.getProperty(keyAsString));
+            }
+        }
+        
+        return placeholders;
+    }
+    
 }
