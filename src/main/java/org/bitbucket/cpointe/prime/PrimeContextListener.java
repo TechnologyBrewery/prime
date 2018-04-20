@@ -47,6 +47,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         if (!primeConfig.isActive()) {
             logger.warn("Prime is currently set to inactive!");
+            return;
         } else {
             logger.info("START: Prime execution...");
         }
