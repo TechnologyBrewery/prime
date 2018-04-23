@@ -16,12 +16,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Context listener that runs database migrations from Flyway during application startup.
+ * Context listener that runs database migrations from Flyway during application
+ * startup.
  */
 public class PrimeContextListener implements ServletContextListener {
-    
+
     private static final Logger logger = LoggerFactory.getLogger(PrimeContextListener.class);
-    
+
     protected static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
     protected static final String PLACEHOLDER_PREFIX = "placeholder.";
     protected static final String PLACEHOLDER_SCHEMA = PLACEHOLDER_PREFIX + "schema";
@@ -47,25 +48,21 @@ public class PrimeContextListener implements ServletContextListener {
 
         if (!primeConfig.isActive()) {
             logger.warn("Prime is currently set to inactive!");
-            return;
         } else {
             logger.info("START: Prime execution...");
+
+            initFlyway();
+
+            runFlyway();
+
+            long stop = System.currentTimeMillis();
+            logger.info("COMPLETE: Prime migrations executed in {}ms", (stop - start));
         }
+    }
 
-        initFlyway();
-        
-        
-
-        // if the application hasn't already been baselined then baseline
-        flyway.setBaselineOnMigrate(primeConfig.shouldBaselineOnMigrate());
-        flyway.setBaselineVersionAsString(primeConfig.getBaselineVersion());
-        flyway.setBaselineDescription("Initial Flyway Baseline via Prime Execution");
-
-        // migrate application (if there is anything to migrate)
-        String locations = StringUtils.join(flyway.getLocations(), ", ");
-        logger.info("Migrating application if necessary with Flyway in: {}", locations);
-
-        // try 3 times (w/ 20 sec pauses) in case the database is taking a minute to startup
+    private void runFlyway() {
+        // try 3 times (w/ 20 sec pauses) in case the database is taking a
+        // minute to startup
         boolean flywayRan = false;
         int maxRetries = 3;
         for (int i = 0; i < maxRetries; i++) {
@@ -83,21 +80,22 @@ public class PrimeContextListener implements ServletContextListener {
                 }
             }
         }
-        
+
         if (!flywayRan) {
-            // run one last time outside try/catch so if the migration failed the startup fails
+            // run one last time outside try/catch so if the migration
+            // failed the startup fails
             flyway.migrate();
         }
-
-        long stop = System.currentTimeMillis();
-        logger.info("COMPLETE: Prime migrations executed in {}ms", (stop - start));
     }
 
     /**
-     * Loads PrimeConfig after giving the user an opportunity to override the default file name that will be 
-     * used to provide properties.  This allows multiple wars in the same application server to use different
-     * sets of properties.
-     * @param event context potentially containing an updated properties file name
+     * Loads PrimeConfig after giving the user an opportunity to override the
+     * default file name that will be used to provide properties. This allows
+     * multiple wars in the same application server to use different sets of
+     * properties.
+     * 
+     * @param event
+     *            context potentially containing an updated properties file name
      */
     private void instantiatePrimeConfig(ServletContextEvent event) {
         ServletContext servletContext = event.getServletContext();
@@ -118,13 +116,13 @@ public class PrimeContextListener implements ServletContextListener {
         flyway = new Flyway();
 
         Map<String, String> placeholders = getPlaceholders();
-        
+
         // Set schema
         String schema = primeConfig.getSchema();
         if (StringUtils.isNotBlank(schema)) {
             flyway.setSchemas(schema);
             placeholders.put(PLACEHOLDER_SCHEMA, schema);
-        }                
+        }
 
         // Point it to the database
         String url = primeConfig.getUrl();
@@ -137,24 +135,33 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
         flyway.setPlaceholders(placeholders);
-        
+
         if (StringUtils.isNotBlank(primeConfig.getTable())) {
             flyway.setTable(primeConfig.getTable());
         }
+        
+        // if the application hasn't already been baselined then baseline
+        flyway.setBaselineOnMigrate(primeConfig.shouldBaselineOnMigrate());
+        flyway.setBaselineVersionAsString(primeConfig.getBaselineVersion());
+        flyway.setBaselineDescription("Initial Flyway Baseline via Prime Execution");
+
+        // migrate application (if there is anything to migrate)
+        String locations = StringUtils.join(flyway.getLocations(), ", ");
+        logger.info("Migrating application if necessary with Flyway in: {}", locations);
     }
-    
+
     protected Map<String, String> getPlaceholders() {
         Map<String, String> placeholders = new HashMap<>();
         Properties primeProperties = Krausening.getInstance().getProperties(propertiesFileName);
-        
+
         for (Object key : primeProperties.keySet()) {
             String keyAsString = key.toString();
             if (keyAsString.startsWith(PLACEHOLDER_PREFIX)) {
                 placeholders.put(keyAsString, primeProperties.getProperty(keyAsString));
             }
         }
-        
+
         return placeholders;
     }
-    
+
 }
