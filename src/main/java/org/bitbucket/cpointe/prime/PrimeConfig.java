@@ -84,7 +84,7 @@ public interface PrimeConfig extends KrauseningConfig {
      * @return migration locations
      */
     @Key("migration.locations")
-    @DefaultValue("classpath:migrations")
+    @DefaultValue("classpath:migrations/common")
     String getMigrationLocations();
     
     /**
@@ -92,7 +92,7 @@ public interface PrimeConfig extends KrauseningConfig {
      * @return migration location
      */
     @Key("migration.locations.database-type")
-    @DefaultValue("classpath:mssql-migrations")
+    @DefaultValue("classpath:migrations/mssql")
     String getMigrationLocationDatabaseType();
 
     /**
