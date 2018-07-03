@@ -147,6 +147,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         // migrate application (if there is anything to migrate)
         String locations = StringUtils.join(flyway.getLocations(), ", ");
+        locations += ", "+ StringUtils.join(primeConfig.getMigrationLocationDatabaseType(), ", ");
         logger.info("Migrating application if necessary with Flyway in: {}", locations);
     }
 

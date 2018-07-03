@@ -86,6 +86,14 @@ public interface PrimeConfig extends KrauseningConfig {
     @Key("migration.locations")
     @DefaultValue("classpath:migrations")
     String getMigrationLocations();
+    
+    /**
+     * A folder location of where to find migrations that are specific to the current database type.
+     * @return migration location
+     */
+    @Key("migration.locations.database-type")
+    @DefaultValue("classpath:mssql-migrations")
+    String getMigrationLocationDatabaseType();
 
     /**
      * Prefix for replacing strings within SQL scripts.
