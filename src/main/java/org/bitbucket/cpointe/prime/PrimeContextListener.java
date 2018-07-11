@@ -132,9 +132,10 @@ public class PrimeContextListener implements ServletContextListener {
 
         // Point it to the sql migrations
         String mainLocation = StringUtils.join(flyway.getLocations(), ", ");
+        String migrationLocations = primeConfig.getMigrationLocations();
         String dbSpecificLocation = primeConfig.getMigrationLocationDatabaseType();
         
-        flyway.setLocations(mainLocation, dbSpecificLocation);
+        flyway.setLocations(mainLocation, dbSpecificLocation, migrationLocations);
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
         flyway.setPlaceholders(placeholders);
