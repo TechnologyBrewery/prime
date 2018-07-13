@@ -64,7 +64,7 @@ Want Prime in your project? The following Maven dependency will add it to your M
 <dependency>
     <groupId>org.bitbucket.cpointe.prime</groupId>
     <artifactId>prime</artifactId>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
 </dependency>
 ```
 
