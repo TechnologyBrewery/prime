@@ -71,7 +71,7 @@ public class PrimeContextListener implements ServletContextListener {
                 flywayRan = true;
                 break;
             } catch (Exception e) {
-                logger.error("Failed to migrate flyway...", e);
+                logger.warn("Failed to migrate flyway (attempt "+i+" of "+maxRetries+", trying again...");
                 try {
                     Thread.sleep(primeConfig.getMigrationRetryWaitTime());
                 } catch (InterruptedException ie) {
@@ -86,6 +86,7 @@ public class PrimeContextListener implements ServletContextListener {
             // failed the startup fails
             flyway.migrate();
         }
+        logger.info("(NOT AN ERROR) - Prime migration completed");
     }
 
     /**
