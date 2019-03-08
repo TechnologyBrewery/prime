@@ -29,7 +29,7 @@ schema=mySchema
 
 For an entire list of what is configurable what default values are used, please see [PrimeConfig](https://bitbucket.org/cpointe/prime/src/a9bc4fe5e7c73857e2621e13b5e7073d06c2a27e/src/main/java/org/bitbucket/cpointe/prime/PrimeConfig.java?at=master&fileviewer=file-view-default) for the version you are leveraging.
 
-3.) Make sure you have at least one Flyway migration defined in `src/main/resources/db/migrations`.
+3.) Make sure you have at least one Flyway migration defined in `src/main/resources/db/migration` or `src/main/resources/migrations/common`
 
 4.) You're done.  When you next deploy your WAR, Prime will run your migrations. order your next pint!
 
