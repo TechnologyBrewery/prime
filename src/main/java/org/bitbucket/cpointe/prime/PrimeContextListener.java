@@ -102,12 +102,13 @@ public class PrimeContextListener implements ServletContextListener {
         String overloadedPropertiesName = servletContext.getInitParameter(PRIME_PROPERTIES_FILE_NAME);
 
         if (StringUtils.isNotBlank(overloadedPropertiesName)) {
-            primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, overloadedPropertiesName);
+            primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, overloadedPropertiesName,
+                    System.getProperties());
             propertiesFileName = overloadedPropertiesName;
             logger.info("Overriding prime configuration to look at properties named {}", overloadedPropertiesName);
 
         } else {
-            primeConfig = KrauseningConfigFactory.create(PrimeConfig.class);
+            primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, System.getProperties());
 
         }
     }
@@ -134,7 +135,7 @@ public class PrimeContextListener implements ServletContextListener {
         String mainLocation = StringUtils.join(flyway.getLocations(), ", ");
         String migrationLocations = primeConfig.getMigrationLocations();
         String dbSpecificLocation = primeConfig.getMigrationLocationDatabaseType();
-        
+
         flyway.setLocations(mainLocation, dbSpecificLocation, migrationLocations);
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
@@ -143,14 +144,14 @@ public class PrimeContextListener implements ServletContextListener {
         if (StringUtils.isNotBlank(primeConfig.getTable())) {
             flyway.setTable(primeConfig.getTable());
         }
-        
+
         // if the application hasn't already been baselined then baseline
         flyway.setBaselineOnMigrate(primeConfig.shouldBaselineOnMigrate());
         flyway.setBaselineVersionAsString(primeConfig.getBaselineVersion());
         flyway.setBaselineDescription("Initial Flyway Baseline via Prime Execution");
 
         // migrate application (if there is anything to migrate)
-        
+
         logger.info("Migrating application if necessary with Flyway in: {}, {}", mainLocation, dbSpecificLocation);
     }
 
