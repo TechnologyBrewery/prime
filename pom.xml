@@ -4,7 +4,7 @@
 
 	<groupId>org.bitbucket.cpointe.prime</groupId>
 	<artifactId>prime</artifactId>
-	<version>1.1.4-SNAPSHOT</version>
+	<version>1.1.4</version>
 
 	<name>prime</name>
 	<description>
@@ -36,7 +36,7 @@
 		<connection>scm:git:git@bitbucket.org:cpointe/prime.git</connection>
 		<developerConnection>scm:git:git@bitbucket.org:cpointe/prime.git</developerConnection>
 		<url>https://bitbucket.org/cpointe/prime.git</url>
-		<tag>HEAD</tag>
+		<tag>prime-1.1.4</tag>
 	</scm>
 
 	<distributionManagement>
