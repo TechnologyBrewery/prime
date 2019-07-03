@@ -35,7 +35,10 @@ For an entire list of what is configurable what default values are used, please 
 
 # Prime in Two Pints (Executing migrations when you have at least one war using Prime)#
 
-It's common to have multiple deployment units deployed to a single application server.  In this scenario, you'll want the ability to differentiate `prime.properties` between deployment utils.  The instructions are almost the same - you just need a bit more sugar:
+It's common to have multiple deployment units deployed to a single application server.  In this scenario, you'll want the ability to differentiate `prime.properties` between deployment utils.  The instructions are almost the same - you just need a bit more sugar. There are two options for this:
+
+## Option 1 - multiple prime.properties ##
+ - This option works well when you need entirely different properties for each deployment.
 
 1.) Add an extra configuration parameter to each of your web.xml files that specifies which properties file will contain your configurations (rather than the standard `prime.properties`):
 
@@ -48,6 +51,20 @@ It's common to have multiple deployment units deployed to a single application s
 ```
 
 2.) Ensure that you have [Krausening](https://bitbucket.org/cpointe/krausening) configured, minually specifying the following values in the Krausening-managed `prime.properties`:
+
+## Option 2 - specify schema in web.xml ##
+ - This option works well when you just need to have a different schema for each deployment.
+
+1.) Add an extra configuration parameter to each web.xml files that specifies the schema that prime should use for migrations.
+
+```
+#!xml
+	<context-param>
+		<param-name>prime.schema</param-name>
+		<param-value>this_deployments_schema</param-value>
+	</context-param>
+```
+
 
 # Prime Advanced Configuration #
 
