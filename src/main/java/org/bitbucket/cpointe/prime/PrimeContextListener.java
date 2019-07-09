@@ -24,12 +24,15 @@ public class PrimeContextListener implements ServletContextListener {
     private static final Logger logger = LoggerFactory.getLogger(PrimeContextListener.class);
 
     protected static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
+    protected static final String PRIME_SCHEMA = "prime.schema";
     protected static final String PLACEHOLDER_PREFIX = "placeholder.";
     protected static final String PLACEHOLDER_SCHEMA = PLACEHOLDER_PREFIX + "schema";
 
     protected PrimeConfig primeConfig;
     protected Flyway flyway;
     protected String propertiesFileName = "prime.properties";
+
+    private String primeSchemaFromContext;
 
     /**
      * {@inheritDoc}
@@ -71,12 +74,11 @@ public class PrimeContextListener implements ServletContextListener {
                 flywayRan = true;
                 break;
             } catch (Exception e) {
-                logger.error("Failed to migrate flyway...", e);
+                logger.warn("Failed to migrate flyway (attempt {} of {})", i + 1, maxRetries + 1);
                 try {
                     Thread.sleep(primeConfig.getMigrationRetryWaitTime());
                 } catch (InterruptedException ie) {
-                    logger.error("Failed to sleep to wait for database - attempt " + (i + 1) + " of " + maxRetries + 1,
-                            ie);
+                    logger.error("Failed to sleep to wait for database (attempt {} of {})", i + 1, maxRetries + 1, ie);
                 }
             }
         }
@@ -101,6 +103,8 @@ public class PrimeContextListener implements ServletContextListener {
         ServletContext servletContext = event.getServletContext();
         String overloadedPropertiesName = servletContext.getInitParameter(PRIME_PROPERTIES_FILE_NAME);
 
+        primeSchemaFromContext = servletContext.getInitParameter(PRIME_SCHEMA);
+
         if (StringUtils.isNotBlank(overloadedPropertiesName)) {
             primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, overloadedPropertiesName,
                     System.getProperties());
@@ -118,8 +122,14 @@ public class PrimeContextListener implements ServletContextListener {
 
         Map<String, String> placeholders = getPlaceholders();
 
-        // Set schema
-        String schema = primeConfig.getSchema();
+        // Set schema from web.xml if supplied, otherwise set if from the
+        // krausening config
+        String schema;
+        if (StringUtils.isBlank(primeSchemaFromContext)) {
+            schema = primeConfig.getSchema();
+        } else {
+            schema = primeSchemaFromContext;
+        }
         if (StringUtils.isNotBlank(schema)) {
             flyway.setSchemas(schema);
             placeholders.put(PLACEHOLDER_SCHEMA, schema);
