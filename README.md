@@ -17,7 +17,7 @@ Prime is easy to setup - it just takes a couple of simple steps:
     </listener>
 ```
 
-2.) Ensure that you have [Krausening](https://bitbucket.org/cpointe/krausening) configured, and configure values in the Krausening-managed `prime.properties`:
+2.) Ensure that you have [Krausening](https://bitbucket.org/cpointe/krausening) configured, and specify properties in the Krausening-managed `prime.properties`:
 
 The following property is required:
 ```
