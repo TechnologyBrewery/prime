@@ -162,7 +162,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         // migrate application (if there is anything to migrate)
 
-        logger.info("Migrating application if necessary with Flyway in: {}, {}", mainLocation, dbSpecificLocation);
+        logger.info("Migrating application if necessary with Flyway in: {}, {}, {}", mainLocation, dbSpecificLocation, migrationLocations);
     }
 
     protected Map<String, String> getPlaceholders() {
