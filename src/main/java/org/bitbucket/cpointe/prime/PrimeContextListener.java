@@ -1,8 +1,6 @@
 package org.bitbucket.cpointe.prime;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -95,7 +93,7 @@ public class PrimeContextListener implements ServletContextListener {
      * default file name that will be used to provide properties. This allows
      * multiple wars in the same application server to use different sets of
      * properties.
-     * 
+     *
      * @param event
      *            context potentially containing an updated properties file name
      */
@@ -142,11 +140,12 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setDataSource(url, username, password);
 
         // Point it to the sql migrations
-        String mainLocation = StringUtils.join(flyway.getLocations(), ", ");
-        String migrationLocations = primeConfig.getMigrationLocations();
-        String dbSpecificLocation = primeConfig.getMigrationLocationDatabaseType();
+        List<String> allLocations = new ArrayList<String>();
+        allLocations.addAll(Arrays.asList(flyway.getLocations()));
+        allLocations.addAll(primeConfig.getMigrationLocations());
+        allLocations.add(primeConfig.getMigrationLocationDatabaseType());
 
-        flyway.setLocations(mainLocation, dbSpecificLocation, migrationLocations);
+        flyway.setLocations(allLocations.toArray(new String[0]));
         flyway.setPlaceholderPrefix(primeConfig.getPlaceholderPrefix());
         flyway.setPlaceholderSuffix(primeConfig.getPlaceholderSuffix());
         flyway.setPlaceholders(placeholders);
@@ -162,7 +161,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         // migrate application (if there is anything to migrate)
 
-        logger.info("Migrating application if necessary with Flyway in: {}, {}, {}", mainLocation, dbSpecificLocation, migrationLocations);
+        logger.info("Migrating application if necessary with Flyway in: {}", allLocations);
     }
 
     protected Map<String, String> getPlaceholders() {

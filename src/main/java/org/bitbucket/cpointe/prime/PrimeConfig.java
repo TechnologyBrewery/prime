@@ -1,5 +1,7 @@
 package org.bitbucket.cpointe.prime;
 
+import java.util.List;
+
 import org.aeonbits.owner.KrauseningConfig;
 import org.aeonbits.owner.KrauseningConfig.KrauseningSources;
 
@@ -11,7 +13,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Whether or not prime is active.
-     * 
+     *
      * @return active or not
      */
     @Key("active")
@@ -20,7 +22,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Whether to have Flyway baseline on migration if it has not already been done.
-     * 
+     *
      * @return baseline or not
      */
     @Key("baseline.on.migrate")
@@ -29,7 +31,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * The baseline version to use, if baselining.
-     * 
+     *
      * @return version
      */
     @Key("baseline.version")
@@ -38,7 +40,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * How long to wait before retrying the database on failure.
-     * 
+     *
      * @return retry delay in milliseconds
      */
     @Key("migration.retry.wait.time")
@@ -47,7 +49,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * The database schema to use.
-     * 
+     *
      * @return schema
      */
     @Key("schema")
@@ -55,7 +57,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * The JDBC url to use.
-     * 
+     *
      * @return JDBC url
      */
     @Key("url")
@@ -63,7 +65,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Database username.
-     * 
+     *
      * @return username
      */
     @Key("username")
@@ -71,7 +73,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Database password.
-     * 
+     *
      * @return password
      */
     @Key("password")
@@ -80,13 +82,13 @@ public interface PrimeConfig extends KrauseningConfig {
     /**
      * A comma separated list of Flyway-style migration locations.  For more information, please see the following url:
      * https://flywaydb.org/documentation/commandline/migrate#locations
-     * 
+     *
      * @return migration locations
      */
     @Key("migration.locations")
     @DefaultValue("classpath:migrations/common")
-    String getMigrationLocations();
-    
+    List<String> getMigrationLocations();
+
     /**
      * A folder location of where to find migrations that are specific to the current database type.
      * @return migration location
@@ -97,7 +99,7 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Prefix for replacing strings within SQL scripts.
-     * 
+     *
      * @return prefix
      */
     @Key("placeholder.prefix")
@@ -106,13 +108,13 @@ public interface PrimeConfig extends KrauseningConfig {
 
     /**
      * Suffix for replacing strings within SQL scripts.
-     * 
+     *
      * @return suffix
      */
     @Key("placeholder.suffix")
     @DefaultValue("}")
     String getPlaceholderSuffix();
-    
+
     /**
      * When set, will customize the table in which Flyway stores history information.
      * @return name of the custom schema
