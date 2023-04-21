@@ -1,4 +1,4 @@
-package org.bitbucket.cpointe.prime;
+package org.technologybrewery.prime;
 
 import java.util.List;
 

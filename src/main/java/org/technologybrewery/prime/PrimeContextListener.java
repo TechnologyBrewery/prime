@@ -1,17 +1,16 @@
-package org.bitbucket.cpointe.prime;
+package org.technologybrewery.prime;
 
-import java.util.*;
+import org.aeonbits.owner.KrauseningConfigFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.flywaydb.core.Flyway;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.technologybrewery.krausening.Krausening;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-
-import org.aeonbits.owner.KrauseningConfigFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.bitbucket.krausening.Krausening;
-import org.flywaydb.core.Flyway;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.*;
 
 /**
  * Context listener that runs database migrations from Flyway during application
@@ -21,7 +20,7 @@ public class PrimeContextListener implements ServletContextListener {
 
     private static final Logger logger = LoggerFactory.getLogger(PrimeContextListener.class);
 
-    protected static final String PRIME_PROPERTIES_FILE_NAME = "prime.properties.file.name";
+    protected static final String PRIME_CONFIG_EXTENSIONS_CLASS_NAME = "prime.config.extensions.class.name";
     protected static final String PRIME_SCHEMA = "prime.schema";
     protected static final String PLACEHOLDER_PREFIX = "placeholder.";
     protected static final String PLACEHOLDER_SCHEMA = PLACEHOLDER_PREFIX + "schema";
@@ -47,7 +46,7 @@ public class PrimeContextListener implements ServletContextListener {
 
         instantiatePrimeConfig(event);
 
-        if (!primeConfig.isActive()) {
+        if (Boolean.FALSE.equals(primeConfig.isActive())) {
             logger.warn("Prime is currently set to inactive!");
         } else {
             logger.info("START: Prime execution...");
@@ -94,20 +93,24 @@ public class PrimeContextListener implements ServletContextListener {
      * multiple wars in the same application server to use different sets of
      * properties.
      *
-     * @param event
-     *            context potentially containing an updated properties file name
+     * @param event context potentially containing an updated properties file name
      */
     private void instantiatePrimeConfig(ServletContextEvent event) {
         ServletContext servletContext = event.getServletContext();
-        String overloadedPropertiesName = servletContext.getInitParameter(PRIME_PROPERTIES_FILE_NAME);
+        String overloadedPrimeClassName = servletContext.getInitParameter(PRIME_CONFIG_EXTENSIONS_CLASS_NAME);
 
         primeSchemaFromContext = servletContext.getInitParameter(PRIME_SCHEMA);
 
-        if (StringUtils.isNotBlank(overloadedPropertiesName)) {
-            primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, overloadedPropertiesName,
-                    System.getProperties());
-            propertiesFileName = overloadedPropertiesName;
-            logger.info("Overriding prime configuration to look at properties named {}", overloadedPropertiesName);
+        if (StringUtils.isNotBlank(overloadedPrimeClassName)) {
+            Class<PrimeConfig> overloadedProfileClass = null;
+            try {
+                overloadedProfileClass = (Class<PrimeConfig>) Class.forName(overloadedPrimeClassName);
+                primeConfig = KrauseningConfigFactory.create(overloadedProfileClass, System.getProperties());
+                logger.info("Overriding prime configuration to use PrimeConfig extension named {}", overloadedProfileClass);
+
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Could not find PrimeConfig extension class named: " + overloadedPrimeClassName, e);
+            }
 
         } else {
             primeConfig = KrauseningConfigFactory.create(PrimeConfig.class, System.getProperties());
@@ -140,7 +143,7 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setDataSource(url, username, password);
 
         // Point it to the sql migrations
-        List<String> allLocations = new ArrayList<String>();
+        List<String> allLocations = new ArrayList<>();
         allLocations.addAll(Arrays.asList(flyway.getLocations()));
         allLocations.addAll(primeConfig.getMigrationLocations());
         allLocations.add(primeConfig.getMigrationLocationDatabaseType());
@@ -160,7 +163,6 @@ public class PrimeContextListener implements ServletContextListener {
         flyway.setBaselineDescription("Initial Flyway Baseline via Prime Execution");
 
         // migrate application (if there is anything to migrate)
-
         logger.info("Migrating application if necessary with Flyway in: {}", allLocations);
     }
 
