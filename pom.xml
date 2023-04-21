@@ -10,7 +10,7 @@
 
 	<groupId>org.technologybrewery.prime</groupId>
 	<artifactId>prime</artifactId>
-	<version>1.3.0</version>
+	<version>1.4.0-SNAPSHOT</version>
 
 	<name>prime</name>
 	<description>
@@ -41,7 +41,7 @@
 		<connection>scm:git:ssh://git@github.com/TechnologyBrewery/prime.git</connection>
 		<developerConnection>scm:git:ssh://git@github.com/TechnologyBrewery/prime.git</developerConnection>
 		<url>https://github.com/TechnologyBrewery/prime.git</url>
-		<tag>prime-1.3.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 
 	<build>
